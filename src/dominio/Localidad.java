@@ -1,26 +1,25 @@
 package dominio;
-public class Localidad{
-        private String nombre;
-        private String numeroDeHabitantes;
-
-        public void setNombre(String nombre)
-        {
-                this.nombre = nombre;}
-        public void setNumeroDeHabintantes(String NumeroDeHabitantes)
-        {
-                this.numeroDeHabitantes = numeroDeHabitantes;}
-
-        public String getNombre()
-        {return nombre;}
-        public String getApellido1()
-        {return apellido1;}
-
-
-        public Habitante (String nombre, String apellido1, String apellido2)
-        {
-        this.nombre = nombre;
-        this.apellido1 = apellido1;
-        this.apellido2 = apellido2;
-    }
-
+public class Localidad {
+	private String nombre;
+	private int habitantes_localidad;
+	public Localidad(String nombre,int habitantes_localidad){
+		this.nombre = nombre;
+		this.habitantes_localidad = habitantes_localidad;
+	}
+	public void setNombre(String nombre){
+		this.nombre = nombre;
+	}
+	public void setHabitantes_localidad(int habitantes_localidad){
+		this.habitantes_localidad = habitantes_localidad;
+	}
+	public String getNombre(){
+		return this.nombre;
+	}
+	public int getHabitantes_localidad(){
+		return this.habitantes_localidad;
+	}
+	public String toString(){
+		String result =  ("La localidad " + this.nombre + " tiene " + this.habitantes_localidad + " habitantes");
+		return result;
+	}
 }
