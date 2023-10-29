@@ -1,8 +1,8 @@
 package dominio;
 import java.util.ArrayList;
 import java.util.List;
-
-public class Provincia {
+import java.io.Serializable
+public class Provincia implements Serializable{
     private String nombre_provincia;
     private List<Municipio> municipios;
 
