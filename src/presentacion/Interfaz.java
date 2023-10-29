@@ -1,44 +1,144 @@
 package presentacion;
 import dominio.*;
-import java.io.*;
 import java.util.*;
-private static Scanner sc = new Scanner(System.in);
+import java.io.*;
+
 public class Interfaz {
-public static boolean procesarPeticion (String peticion, ArrayList<Provincia> 1){ 
-	String [] p-peticion.split(" ");
-	if (p.length!=2)
-	if (p[0].equals("addProvincia"))
-		aniadirProvincia(p[1],l);
-	else if (p[0].equals("addMunicipio"))
-	aniadirMunicipio(p[1],]);
-	else if (p[0].equals("addLocalidad"))
-	 aniadirLocalidad(p[1],l);
-	else //peticion erronea
-		System.out.print("peticion erronea. Pida la ayuda 'help'");
-	else if (p.length()==1)
-		if (p[0].equals("leer")) 1-leer();
-		else if (p[0].equals("list")) System.out.print (1);
-		else if (p[0].equals("help"))
-System.out.print("introduzca ua de las siguientes peticiones: \n addProvindia nombre: añadir provincia\n addMunicipio nombre: añadir Municipio\n addLocalidad nombre: añadir Localidad\n list: listar el contenido\n leer: lectura inicial\n exit: salir\n");
-else if (p[0].equals("exit"))
-                        return false;
-                else {
-}
-return false;
-else {
-}
-System.out.print("petición erronea"); procesarPeticion("help", l);
-System.out.print("petición erronea"); procesarPeticion("help", l);
-return true;
-}
-Provincia p=new Provincia(nombre);
-l.add(p);
-public static void aniadirMunicipio(String nombre, ArrayList<Provincia> l){ Municipio m=new Municipio (nombre);
-}
-for (int i=0;i<l.size();i++)
-System.out.println(i+": " + l.get(i).getNombre()); System.out.print("Introduzca el número de la provincia: ");
-int i=sc.nextInt();
-sc.nextLine(); l.get(i).add(m);
-public static void aniadirLocalidad(String nombre, ArrayList<Provincia> l) {
+    public ArrayList<Provincia> provincias = new ArrayList<>();
 
+    public Interfaz() {
+        try {
+            ObjectInputStream obj = new ObjectInputStream(new FileInputStream("Provincias.txt"));
+            provincias = (ArrayList<Provincia>) obj.readObject();
+            obj.close();
+        } catch (IOException | ClassNotFoundException e) {
+            provincias = new ArrayList<>();
+        }
+    }
 
+    public void guardar() {
+        try {
+            ObjectOutputStream obj = new ObjectOutputStream(new FileOutputStream("Provincias.txt"));
+            obj.writeObject(provincias);
+            obj.close();
+            System.out.println("Guardado con éxito.");
+        } catch (IOException e) {
+            System.out.println("Error al guardar: " + e.getMessage());
+        }
+    }
+
+    public void leer() {
+        Scanner sc = new Scanner(System.in);
+        String nomProvincia;
+
+        while (true) {
+            System.out.print("Introduzca el nombre de la provincia (enter para finalizar): ");
+            nomProvincia = sc.nextLine();
+
+            if (nomProvincia.equals("")) {
+                break;
+            }
+
+            Provincia p = new Provincia(nomProvincia);
+
+            while (true) {
+                System.out.print("Introduzca el nombre del municipio (enter para finalizar): ");
+                String nomMunicipio = sc.nextLine();
+
+                if (nomMunicipio.equals("")) {
+                    break;
+                }
+
+                Municipio m = new Municipio(nomMunicipio);
+                p.addMunicipio(m);
+
+                while (true) {
+                    System.out.print("Introduzca el nombre de la localidad (enter para finalizar): ");
+                    String nomLocalidad = sc.nextLine();
+
+                    if (nomLocalidad.equals("")) {
+                        break;
+                    }
+
+                    System.out.print("Introduzca el número de habitantes: ");
+                    int numeroDeHabitantes = 0;
+
+                    try {
+                        numeroDeHabitantes = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Valor introducido incorrecto.");
+                    }
+
+                    Localidad l = new Localidad(nomLocalidad, numeroDeHabitantes);
+                    m.addLocalidad(l);
+                }
+            }
+            provincias.add(p);
+        }
+        sc.close();
+    }
+
+    public void insertarProvincia() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("Defina el nombre de la provincia: ");
+        String nombre = sc.nextLine();
+
+        if (!nombre.equals("")) {
+            Provincia p = new Provincia(nombre);
+            provincias.add(p);
+        } else {
+            System.out.println("El valor introducido no es válido.");
+        }
+        sc.close();
+    }
+
+    public void insertarMunicipio() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("A qué provincia pertenece el municipio: ");
+        String nombreProvincia = sc.nextLine();
+        Provincia p = new Provincia(nombreProvincia);
+        int indice = provincias.indexOf(p);
+
+        if (indice != -1) {
+            System.out.println("Defina el nombre del municipio: ");
+            String nombreMunicipio = sc.nextLine();
+            Municipio m = new Municipio(nombreMunicipio);
+            provincias.get(indice).addMunicipio(m);
+        } else {
+            System.out.println("La provincia no existe.");
+        }
+        sc.close();
+    }
+
+    public void insertarLocalidad() {
+        Scanner sc = new Scanner(System.in);
+        System.out.println("A qué municipio pertenece la localidad: ");
+        String nombreMunicipio = sc.nextLine();
+
+        for (Provincia p : provincias) {
+            for (Municipio m : p.getMunicipios()) {
+                if (m.getNombre().equals(nombreMunicipio)) {
+                    System.out.println("Ingrese el nombre de la localidad: ");
+                    String nombreLocalidad = sc.nextLine();
+                    System.out.println("Ingrese el número de habitantes: ");
+
+                    int numeroDeHabitantes = 0;
+
+                    try {
+                        numeroDeHabitantes = Integer.parseInt(sc.nextLine());
+                    } catch (NumberFormatException e) {
+                        System.out.println("Valor introducido incorrecto.");
+                    }
+
+                    Localidad l = new Localidad(nombreLocalidad, numeroDeHabitantes);
+                    m.addLocalidad(l);
+                    sc.close();
+                    return;
+                }
+            }
+        }
+
+        System.out.println("El municipio no existe.");
+        sc.close();
+   }
+}
